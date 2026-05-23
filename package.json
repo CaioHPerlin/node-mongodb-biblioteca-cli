@@ -1,0 +1,21 @@
+{
+  "name": "mongodb-biblioteca-cli",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "tsx --env-file=.env src/index.ts",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@11.2.2",
+  "devDependencies": {
+    "@types/node": "^25.9.1",
+    "tsx": "^4.22.3",
+    "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "mongodb": "^7.2.0"
+  }
+}

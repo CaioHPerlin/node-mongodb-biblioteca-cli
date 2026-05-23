@@ -45,5 +45,5 @@ export function formatDate(value: Date | undefined): string {
     return "-";
   }
 
-  return new Date(value).toLocaleString("pt-BR");
+  return new Date(value).toLocaleDateString("pt-BR");
 }

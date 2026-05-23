@@ -11,6 +11,7 @@ export class EmprestimosMenu extends CliMenu {
     return [
       { label: "Listar todos", action: () => this.listAll() },
       { label: "Listar ativos", action: () => this.listActive() },
+      { label: "Listar atrasados", action: () => this.listOverdue() },
       { label: "Novo empréstimo", action: () => this.create() },
       { label: "Registrar devolução", action: () => this.registerReturn() },
       { label: "Voltar" },
@@ -24,7 +25,12 @@ export class EmprestimosMenu extends CliMenu {
 
   private async listActive() {
     const activeEmprestimos = await this.service.findActiveForDisplay();
-    this.printTable(activeEmprestimos);
+    this.printTable(activeEmprestimos, "Nenhum empréstimo ativo.");
+  }
+
+  private async listOverdue() {
+    const overdueEmprestimos = await this.service.findOverdueForDisplay();
+    this.printTable(overdueEmprestimos, "Nenhum empréstimo atrasado.");
   }
 
   private async create() {
@@ -47,9 +53,10 @@ export class EmprestimosMenu extends CliMenu {
 
   private printTable(
     emprestimos: Awaited<ReturnType<EmprestimosService["findAllForDisplay"]>>,
+    emptyMessage = "Nenhum empréstimo cadastrado.",
   ) {
     if (emprestimos.length === 0) {
-      console.log("Nenhum empréstimo cadastrado.");
+      console.log(emptyMessage);
       return;
     }
 

@@ -18,6 +18,15 @@ export class EmprestimosRepository {
       .toArray();
   }
 
+  async findOverdue(now: Date): Promise<EmprestimoDocument[]> {
+    return this.collection
+      .find({
+        dataDevolucaoReal: { $exists: false },
+        dataDevolucaoPrevista: { $lt: now },
+      })
+      .toArray();
+  }
+
   async create(data: Emprestimo): Promise<EmprestimoDocument> {
     const result = await this.collection.insertOne(data);
     return { _id: result.insertedId, ...data };

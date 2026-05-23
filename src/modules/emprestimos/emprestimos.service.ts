@@ -23,6 +23,10 @@ export class EmprestimosService {
     return this.toDisplayItems(await this.repository.findActive());
   }
 
+  async findOverdueForDisplay() {
+    return this.toDisplayItems(await this.repository.findOverdue(new Date()));
+  }
+
   async create(data: CreateEmprestimoDto): Promise<EmprestimoDocument> {
     const livroId = parseObjectId(data.livroId, "ID do livro");
     const usuarioNome = requireNonEmpty(data.usuarioNome, "Nome do usuário");

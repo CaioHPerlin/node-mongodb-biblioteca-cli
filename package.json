@@ -2,7 +2,7 @@
   "name": "mongodb-biblioteca-cli",
   "main": "src/index.ts",
   "scripts": {
-    "dev": "tsx --env-file=.env src/index.ts",
+    "start": "tsx --env-file=.env src/index.ts",
     "build": "tsc",
     "typecheck": "tsc --noEmit"
   },

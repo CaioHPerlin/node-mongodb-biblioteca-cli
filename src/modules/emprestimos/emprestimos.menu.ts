@@ -36,19 +36,23 @@ export class EmprestimosMenu extends CliMenu {
   private async create() {
     const livroId = await this.prompt("ID do livro: ");
     const usuarioNome = await this.prompt("Nome do usuário: ");
-    const diasEmprestimo = await this.prompt("Dias de empréstimo: ");
+    const diasEmprestimo = await this.prompt(
+      "Dias de empréstimo (padrão 14): ",
+    );
     const emprestimo = await this.service.create({
       livroId,
       usuarioNome,
-      diasEmprestimo: Number(diasEmprestimo),
+      diasEmprestimo: diasEmprestimo ? Number(diasEmprestimo) : 14,
     });
-    console.log(`✅ Empréstimo criado: ${emprestimo._id.toString()}`);
+    console.log(`✅ Empréstimo registrado: ${emprestimo._id.toString()}`);
   }
 
   private async registerReturn() {
     const emprestimoId = await this.prompt("ID do empréstimo: ");
-    await this.service.completeReturn(emprestimoId);
-    console.log("✅ Devolução registrada.");
+    const emprestimo = await this.service.completeReturn(emprestimoId);
+    console.log(
+      `✅ Devolução registrada para o empréstimo ${emprestimo._id.toString()}.`,
+    );
   }
 
   private printTable(

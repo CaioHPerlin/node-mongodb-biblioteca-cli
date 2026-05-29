@@ -1,11 +1,14 @@
 import type { ObjectId, WithId } from "mongodb";
 
+export type EmprestimoStatus = "ativo" | "devolvido";
+
 export interface Emprestimo {
-  livroId: ObjectId;
-  usuarioNome: string;
-  dataEmprestimo: Date;
-  dataDevolucaoPrevista: Date;
-  dataDevolucaoReal?: Date;
+  livro_id: ObjectId;
+  usuario_nome: string;
+  data_emprestimo: Date;
+  data_devolucao_prevista: Date;
+  data_devolucao_real?: Date;
+  status: EmprestimoStatus;
 }
 
 export type EmprestimoDocument = WithId<Emprestimo>;

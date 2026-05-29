@@ -1,4 +1,4 @@
-import { closeDB, connectDB, db } from "./common/db";
+import { client, closeDB, connectDB, db } from "./common/db";
 import { CliMenu } from "./common/menu";
 import { handleError } from "./common/utils";
 import { EmprestimosMenu } from "./modules/emprestimos/emprestimos.menu";
@@ -14,6 +14,7 @@ const livrosService = new LivrosService(
 const emprestimosService = new EmprestimosService(
   new EmprestimosRepository(db.collection("emprestimos")),
   livrosService,
+  client,
 );
 
 const menus: Record<string, CliMenu> = {

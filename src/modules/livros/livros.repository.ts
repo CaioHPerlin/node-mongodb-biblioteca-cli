@@ -1,4 +1,4 @@
-import { Collection, ObjectId } from "mongodb";
+import { type ClientSession, Collection, ObjectId } from "mongodb";
 import type { CreateLivroDto } from "./dto/create-livro.dto";
 import type { Livro, LivroDocument } from "./entities/livro";
 
@@ -9,31 +9,42 @@ export class LivrosRepository {
     return this.collection.find().toArray();
   }
 
-  async findById(id: ObjectId): Promise<LivroDocument | null> {
-    return this.collection.findOne({ _id: id });
+  async findById(
+    id: ObjectId,
+    session?: ClientSession,
+  ): Promise<LivroDocument | null> {
+    return this.collection.findOne({ _id: id }, { session });
   }
 
   async create(data: CreateLivroDto): Promise<LivroDocument> {
     const livro: Livro = {
       ...data,
-      quantidadeDisponivel: data.quantidadeTotal,
+      exemplares_disponiveis: data.exemplares_total,
     };
     const result = await this.collection.insertOne(livro);
     return { _id: result.insertedId, ...livro };
   }
 
-  async decrementAvailable(id: ObjectId): Promise<boolean> {
+  async decrementAvailable(
+    id: ObjectId,
+    session?: ClientSession,
+  ): Promise<boolean> {
     const result = await this.collection.updateOne(
-      { _id: id, quantidadeDisponivel: { $gt: 0 } },
-      { $inc: { quantidadeDisponivel: -1 } },
+      { _id: id, exemplares_disponiveis: { $gt: 0 } },
+      { $inc: { exemplares_disponiveis: -1 } },
+      { session },
     );
     return result.modifiedCount === 1;
   }
 
-  async incrementAvailable(id: ObjectId): Promise<boolean> {
+  async incrementAvailable(
+    id: ObjectId,
+    session?: ClientSession,
+  ): Promise<boolean> {
     const result = await this.collection.updateOne(
       { _id: id },
-      { $inc: { quantidadeDisponivel: 1 } },
+      { $inc: { exemplares_disponiveis: 1 } },
+      { session },
     );
     return result.modifiedCount === 1;
   }

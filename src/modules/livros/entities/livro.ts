@@ -1,14 +1,11 @@
 import type { WithId } from "mongodb";
-import type { Autor } from "./autor";
 
 export interface Livro {
   titulo: string;
-  anoPublicacao: number;
-  genero: string;
-  paginas: number;
-  quantidadeTotal: number;
-  quantidadeDisponivel: number;
-  autores: Autor[];
+  autor: string;
+  isbn: string;
+  exemplares_total: number;
+  exemplares_disponiveis: number;
 }
 
 export type LivroDocument = WithId<Livro>;

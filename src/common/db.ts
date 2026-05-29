@@ -1,7 +1,7 @@
 import { MongoClient } from "mongodb";
 import { env } from "./config";
 
-const client = new MongoClient(env.MONGODB_URL);
+export const client = new MongoClient(env.MONGODB_URL);
 export const db = client.db("biblioteca");
 
 export const connectDB = async (): Promise<void> => {

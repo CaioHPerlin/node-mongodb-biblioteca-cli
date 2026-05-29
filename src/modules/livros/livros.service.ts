@@ -1,3 +1,4 @@
+import type { ClientSession } from "mongodb";
 import { ConflictError, NotFoundError } from "../../common/errors";
 import {
   parseObjectId,
@@ -17,36 +18,18 @@ export class LivrosService {
 
   async create(data: CreateLivroDto): Promise<LivroDocument> {
     const titulo = requireNonEmpty(data.titulo, "Título");
-    const genero = requireNonEmpty(data.genero, "Gênero");
-    const anoPublicacao = requirePositiveInteger(
-      data.anoPublicacao,
-      "Ano de publicação",
+    const autor = requireNonEmpty(data.autor, "Autor");
+    const isbn = requireNonEmpty(data.isbn, "ISBN");
+    const exemplaresTotal = requirePositiveInteger(
+      data.exemplares_total,
+      "Total de exemplares",
     );
-    const paginas = requirePositiveInteger(data.paginas, "Páginas");
-    const quantidadeTotal = requirePositiveInteger(
-      data.quantidadeTotal,
-      "Quantidade",
-    );
-
-    if (data.autores.length === 0) {
-      throw new ConflictError("Informe ao menos um autor");
-    }
-
-    const autores = data.autores.map((autor) => ({
-      nome: requireNonEmpty(autor.nome, "Nome do autor"),
-      nacionalidade: requireNonEmpty(
-        autor.nacionalidade,
-        "Nacionalidade do autor",
-      ),
-    }));
 
     return this.repository.create({
       titulo,
-      genero,
-      anoPublicacao,
-      paginas,
-      quantidadeTotal,
-      autores,
+      autor,
+      isbn,
+      exemplares_total: exemplaresTotal,
     });
   }
 
@@ -57,21 +40,21 @@ export class LivrosService {
     if (!deleted) throw new NotFoundError(`Livro ${id} não encontrado`);
   }
 
-  async borrow(id: string): Promise<void> {
+  async borrow(id: string, session?: ClientSession): Promise<void> {
     const livroId = parseObjectId(id, "ID do livro");
-    const ok = await this.repository.decrementAvailable(livroId);
+    const ok = await this.repository.decrementAvailable(livroId, session);
     if (ok) return;
 
-    const livro = await this.repository.findById(livroId);
+    const livro = await this.repository.findById(livroId, session);
     if (!livro) throw new NotFoundError(`Livro ${id} não encontrado`);
     throw new ConflictError(
-      `Livro ${livro.titulo} indisponível para empréstimo`,
+      `Livro "${livro.titulo}" indisponível para empréstimo`,
     );
   }
 
-  async returnBorrowed(id: string): Promise<void> {
+  async returnBorrowed(id: string, session?: ClientSession): Promise<void> {
     const livroId = parseObjectId(id, "ID do livro");
-    const ok = await this.repository.incrementAvailable(livroId);
+    const ok = await this.repository.incrementAvailable(livroId, session);
     if (!ok) {
       throw new NotFoundError(`Livro ${id} não encontrado`);
     }

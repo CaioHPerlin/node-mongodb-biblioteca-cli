@@ -1,5 +1,4 @@
 import { CliMenu, type MenuOption } from "../../common/menu";
-import type { Autor } from "./entities/autor";
 import type { LivrosService } from "./livros.service";
 
 export class LivrosMenu extends CliMenu {
@@ -27,55 +26,26 @@ export class LivrosMenu extends CliMenu {
       livros.map((livro) => ({
         _id: livro._id.toString(),
         Título: livro.titulo,
-        Autores: livro.autores
-          .map((autor) => `${autor.nome} (${autor.nacionalidade})`)
-          .join(", "),
-        Gênero: livro.genero,
-        Ano: livro.anoPublicacao,
-        Páginas: livro.paginas,
-        Disponibilidade: `${livro.quantidadeDisponivel}/${livro.quantidadeTotal}`,
+        Autor: livro.autor,
+        ISBN: livro.isbn,
+        Disponibilidade: `${livro.exemplares_disponiveis}/${livro.exemplares_total}`,
       })),
     );
   }
 
   private async create() {
     const titulo = await this.prompt("Título: ");
-    const autores = await this.collectAuthors();
-    const anoPublicacao = await this.prompt("Ano: ");
-    const genero = await this.prompt("Gênero: ");
-    const paginas = await this.prompt("Páginas: ");
-    const quantidadeTotal = await this.prompt("Quantidade: ");
+    const autor = await this.prompt("Autor: ");
+    const isbn = await this.prompt("ISBN: ");
+    const exemplaresTotal = await this.prompt("Total de exemplares: ");
 
     const livro = await this.service.create({
       titulo,
-      genero,
-      anoPublicacao: Number(anoPublicacao),
-      paginas: Number(paginas),
-      quantidadeTotal: Number(quantidadeTotal),
-      autores,
+      autor,
+      isbn,
+      exemplares_total: Number(exemplaresTotal),
     });
     console.log(`✅ Livro criado: ${livro._id.toString()}`);
-  }
-
-  private async collectAuthors(): Promise<Autor[]> {
-    const autores: Autor[] = [];
-
-    while (true) {
-      const authorIndex = autores.length + 1;
-      const nome = await this.prompt(`Autor ${authorIndex} - nome: `);
-      const nacionalidade = await this.prompt(
-        `Autor ${authorIndex} - nacionalidade: `,
-      );
-
-      autores.push({ nome, nacionalidade });
-
-      const shouldAddAnother = await this.prompt(
-        "Adicionar outro autor? (s/n): ",
-      );
-      if (shouldAddAnother.trim().toLowerCase() !== "s") {
-        return autores;
-      }
-    }
   }
 
   private async remove() {
